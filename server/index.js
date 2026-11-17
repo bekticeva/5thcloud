@@ -1,4 +1,5 @@
 import express from 'express';
+import { error } from 'node:console';
 import fs from 'node:fs/promises';
 import path from 'node:path'
 
@@ -12,7 +13,6 @@ async function comparePaths(rel){
     if(full !== ROOT && !full.startsWith(ROOT + path.sep)) return null;
     return full;
 }
-
 
 app.get('/',(req,res) => {res.send("hello world")});
 
@@ -32,6 +32,18 @@ try{
 }
 })
 
+app.get('/api/download', async(req,res) => {
+    try {
+        const file = await comparePaths(String(req.query.path || ''));
+        if (!file) return res.status(400).json({error: 'bad path'});
 
+        const stats = await fs.stat(file);
+        if (!stats.isFile()) return res.status(400).json({error: 'not a file'})
+        
+        res.download(file);
+    } catch (error) {
+        res.status(404).json({error: 'not found'})
+    }
+});
 
 app.listen(PORT, '127.0.0.1', () => {console.log(`listening on  http://127.0.0.1:${PORT}`)});
