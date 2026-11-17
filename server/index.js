@@ -4,19 +4,32 @@ import path from 'node:path'
 
 const app = express();
 const PORT = 3000;
-const ROOT = path.resolve('../photos');
+const ROOT = await fs.realpath( path.resolve('../photos'));
+
+//path safety check
+async function comparePaths(rel){
+    const full = await fs.realpath(path.resolve(ROOT, rel));
+    if(full !== ROOT && !full.startsWith(ROOT + path.sep)) return null;
+    return full;
+}
+
 
 app.get('/',(req,res) => {res.send("hello world")});
 
-
-
 app.get('/api/list', async(req,res) => {
-    const entries = await fs.readdir(ROOT, {withFileTypes: true})
+try{    
+    const dir = await comparePaths(String(req.query.path || ''));
+    if (!dir) return res.status(400).json({error: 'bad path'});
+
+    const entries = await fs.readdir(dir, {withFileTypes: true})
     const items = entries.map((e) => ({
         name: e.name,
         type: e.isDirectory() ? 'dir' : 'file',
     }))
     res.json(items);
+}catch{
+    res.status(404).json({error: 'not found'})
+}
 })
 
 
