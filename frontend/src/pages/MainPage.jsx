@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Folder from '../components/Folder.jsx'
 import { useSearchParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs.jsx';
 
 function MainPage() {
   const [items, setItems] = useState([]) //lists everything in the main folder
@@ -19,6 +20,7 @@ function MainPage() {
     <div>
       <h1>5thCloud</h1>
 
+        <Breadcrumbs folder={folder} />
         <Folder name={folder || ""} items={items}/>
 
 
