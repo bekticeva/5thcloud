@@ -4,8 +4,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path'
 
 const app = express();
-const PORT = 3000;
-const ROOT = await fs.realpath( path.resolve('../photos'));
+app.use(express.static(path.resolve('../frontend/dist')))
+const PORT = process.env.PORT || 3000;
+const ROOT = await fs.realpath(path.resolve(process.env.PHOTOS_DIR || '../photos'));
 
 //path safety check
 async function comparePaths(rel){
@@ -14,7 +15,6 @@ async function comparePaths(rel){
     return full;
 }
 
-app.get('/',(req,res) => {res.send("hello world")});
 
 app.get('/api/list', async(req,res) => {
 try{    
