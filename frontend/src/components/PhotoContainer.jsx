@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import FileMenu from "./FileMenu";
 
 export default function PhotoContainer({ item, folder }) {
   const fullPath = folder ? `${folder}/${item.name}` : item.name;
@@ -14,9 +15,7 @@ export default function PhotoContainer({ item, folder }) {
         <>
           <div style={{ fontSize: 32 }}>🖼️</div>
           <div>{item.name}</div>
-          <a href={`/api/download?path=${encodeURIComponent(fullPath)}`} download>
-            Download
-          </a>
+          <FileMenu fullPath={fullPath} />
         </>
       )}
     </div>
